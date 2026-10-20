@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jiaming Shi · Profile</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-alt: #161b22;
+    --bg-card: #0f141b;
+    --border: #21262d;
+    --border-accent: #4a3a7a;
+    --text: #c9d1d9;
+    --text-dim: #8b949e;
+    --accent: #a78bfa;
+    --accent-dim: #7c3aed;
+    --accent-gold: #e0a458;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    font-size: 16px; line-height: 1.6;
+    overflow-x: hidden;
+  }
+  #bg-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0; pointer-events: none; opacity: 0.5;
+  }
+  .container {
+    position: relative; z-index: 1;
+    max-width: 980px; margin: 0 auto; padding: 0 32px 80px;
+  }
+  .header-img { width: calc(100% + 64px); margin-left: -32px; display: block; }
+  .typing-wrap { display: flex; justify-content: center; margin: -28px 0 24px; }
+
+  .identity { text-align: center; margin: 24px 0 20px; position: relative; }
+  .identity .avatar {
+    width: 112px; height: 112px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 14px;
+    object-fit: cover;
+    border: 2px solid var(--border-accent);
+    box-shadow:
+      0 0 0 4px rgba(13, 17, 23, 1),
+      0 0 24px 4px rgba(167, 139, 250, 0.18);
+    background: var(--bg-alt);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .identity .avatar:hover {
+    transform: scale(1.04);
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 4px rgba(13, 17, 23, 1),
+      0 0 32px 6px rgba(167, 139, 250, 0.32);
+  }
+  .identity .name {
+    font-size: 30px; font-weight: 700;
+    letter-spacing: 0.02em; color: var(--text); line-height: 1.3;
+  }
+  .identity .affiliation {
+    font-size: 15px; color: var(--text-dim);
+    margin-top: 8px; letter-spacing: 0.02em;
+  }
+
+  h2 {
+    font-size: 17px; font-weight: 600; color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px; margin: 44px 0 18px; letter-spacing: 0.03em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  
+  .section-icon {
+    width: 22px; height: 22px;
+    color: var(--accent);
+    transition: transform 0.4s ease, color 0.3s ease;
+  }
+  h2:hover .section-icon {
+    transform: rotate(15deg) scale(1.1);
+    color: var(--accent-gold);
+  }
+
+  p { margin: 12px 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin: 6px 0; }
+
+  .focus-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    padding: 20px 24px 18px;
+    margin: 18px 0;
+    position: relative;
+  }
+  .focus-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-accent);
+    position: relative;
+  }
+  .focus-header .title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .focus-header .path {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.02em;
+  }
+  .focus-header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-gold) 100%);
+    opacity: 0.55;
+  }
+  .focus-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .focus-item {
+    background: rgba(255,255,255,0.015);
+    border: 1px solid var(--border-accent);
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    position: relative;
+  }
+  .focus-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    background: rgba(167, 139, 250, 0.04);
+  }
+  .focus-item.span-2 { grid-column: span 2; }
+  .focus-item .num {
+    position: absolute;
+    top: 12px; right: 16px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+  }
+  .focus-item.gold .num { color: var(--accent-gold); }
+  .focus-item .label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .focus-item .desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+  @media (max-width: 640px) {
+    .focus-grid { grid-template-columns: 1fr; }
+    .focus-item.span-2 { grid-column: span 1; }
+  }
+
+  .contrib-wrap {
+    background: var(--bg-alt); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 24px; margin: 18px 0;
+  }
+  .contrib-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; font-size: 14px; color: var(--text-dim);
+  }
+  .contrib-header .title { color: var(--text); font-weight: 500; }
+  .contrib-grid-wrap { position: relative; width: 100%; }
+  .contrib-grid {
+    display: flex; gap: 3px; position: relative; width: 100%;
+  }
+  #wave-overlay {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 4;
+  }
+  .contrib-col { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .contrib-cell {
+    width: 100%; aspect-ratio: 1 / 1;
+    border-radius: 3px; background: #161b22;
+    transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+  }
+  .contrib-cell[data-level="0"] { background: #161b22; }
+  .contrib-cell[data-level="1"] { background: #2d1b69; }
+  .contrib-cell[data-level="2"] { background: #5b21b6; }
+  .contrib-cell[data-level="3"] { background: #7c3aed; }
+  .contrib-cell[data-level="4"] { background: #a78bfa; }
+  .contrib-cell.glowing {
+    box-shadow:
+      0 0 3px 1px rgba(167, 139, 250, 0.28),
+      0 0 6px 2px rgba(124, 58, 237, 0.12);
+    transform: scale(1.06);
+    z-index: 3;
+    filter: brightness(1.06);
+  }
+  .contrib-legend {
+    display: flex; justify-content: flex-end; align-items: center;
+    gap: 4px; margin-top: 12px; font-size: 12px; color: var(--text-dim);
+  }
+  .contrib-legend .contrib-cell { width: 12px; height: 12px; aspect-ratio: auto; }
+  .loading { font-size: 12px; color: var(--text-dim); }
+
+  .project-card {
+    display: block; 
+    text-decoration: none; 
+    color: inherit; 
+    border: 1px solid var(--border); 
+    border-radius: 8px;
+    padding: 16px 20px; 
+    margin: 12px 0; 
+    background: var(--bg-alt);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .project-card:hover { 
+    border-color: var(--accent); 
+    transform: translateY(-2px); 
+    text-decoration: none; 
+  }
+  .project-title { 
+    font-weight: 600; 
+    font-size: 15px; 
+    color: var(--text);
+    transition: color 0.2s;
+  }
+  .project-card:hover .project-title {
+    color: var(--accent);
+  }
+  .project-desc { font-size: 14px; color: var(--text-dim); margin-top: 6px; }
+
+  .contact {
+    display: flex; justify-content: center; margin: 20px 0; 
+    background: rgba(13, 17, 23, 0.7); 
+    backdrop-filter: blur(8px); 
+    padding: 24px; 
+    border-radius: 8px; 
+  }
+  .contact-links {
+    display: flex; gap: 32px; flex-wrap: wrap; justify-content: center;
+  }
+  .contact-links a { 
+    display: inline-flex; align-items: center; gap: 10px; font-size: 15px; color: var(--text-dim);
+    transition: color 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+  .contact-links a:hover {
+    color: var(--accent);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .contact-icon {
+    width: 20px; height: 20px;
+  }
+
+  .footer-note { text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 56px; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+</style>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="container">
+
+  <img class="header-img"
+    src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,100:4c1d95&height=200&section=header&text=Jiaming%20Shi&fontSize=62&fontColor=ffffff&fontAlignY=35&desc=Symmetry%20%C2%B7%20Physics%20%C2%B7%20Computation&descAlignY=58&descSize=16&animation=twinkling"
+    alt="header">
+
+  <div class="typing-wrap">
+    <img
+      src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=400&size=16&pause=1000&color=A78BFA&background=00000000&center=true&vCenter=true&width=1100&height=40&lines=Seeking+Underlying+Structures;First+Principles;Open-Source+Ecosystem+Builder;Reconstructing+Knowledge+Systems"
+      alt="typing">
+  </div>
+
+  <div class="identity">
+    <img class="avatar"
+         src="https://github.com/JiamingShi-JsPhys.png"
+         alt="Jiaming Shi">
+    <div class="name">Jiaming Shi</div>
+    <div class="affiliation">Department of Physics · Westlake University</div>
+  </div>
+
+  <h2>
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+      <polygon points="12,2 21,7 12,12 3,7" />
+      <polygon points="3,7 12,12 12,22 3,17" />
+      <polygon points="21,7 12,12 12,22 21,17" />
+      <line x1="12" y1="12" x2="12" y2="22" />
+    </svg>
+    current focus
+  </h2>
+  <div class="focus-card">
+    <div class="focus-header">
+      <span class="title">Current Focus</span>
+      <span class="path">math -&gt; physics -&gt; notes -&gt; code</span>
+    </div>
+    <div class="focus-grid">
+      <div class="focus-item span-2">
+        <span class="num">01</span>
+        <div class="label">Interests</div>
+        <div class="desc">Mathematical Physics, Theoretical Condensed Matter</div>
+      </div>
+      <div class="focus-item">
+        <span class="num">02</span>
+        <div class="label">Knowledge Notes</div>
+        <div class="desc">clean ideas and linked writing</div>
+      </div>
+      <div class="focus-item gold">
+        <span class="num">03</span>
+        <div class="label">Open Source</div>
+        <div class="desc">small tools and readable systems</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+      <polygon points="12,2 22,12 12,22 2,12" />
+      <line x1="12" y1="2" x2="12" y2="7" />
+      <line x1="22" y1="12" x2="17" y2="12" />
+      <line x1="12" y1="22" x2="12" y2="17" />
+      <line x1="2" y1="12" x2="7" y2="12" />
+      <polygon points="12,7 17,12 12,17 7,12" />
+      <line x1="12" y1="2" x2="17" y2="12" />
+      <line x1="12" y1="2" x2="7" y2="12" />
+      <line x1="12" y1="22" x2="17" y2="12" />
+      <line x1="12" y1="22" x2="7" y2="12" />
+    </svg>
+    contributions
+  </h2>
+  <div class="contrib-wrap">
+    <div class="contrib-header">
+      <span class="title">Last 12 months</span>
+      <span id="contrib-count" class="loading">loading…</span>
+    </div>
+    <div class="contrib-grid-wrap">
+      <div class="contrib-grid" id="contrib-grid"></div>
+      <canvas id="wave-overlay"></canvas>
+    </div>
+    <div class="contrib-legend">
+      <span>Less</span>
+      <span class="contrib-cell" data-level="0"></span>
+      <span class="contrib-cell" data-level="1"></span>
+      <span class="contrib-cell" data-level="2"></span>
+      <span class="contrib-cell" data-level="3"></span>
+      <span class="contrib-cell" data-level="4"></span>
+      <span>More</span>
+    </div>
+  </div>
+
+  <h2>
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+      <polygon points="12,2 20,18 4,18" />
+      <line x1="12" y1="2" x2="12" y2="10" />
+      <line x1="4" y1="18" x2="12" y2="10" />
+      <line x1="20" y1="18" x2="12" y2="10" />
+    </svg>
+    projects
+  </h2>
+  <div id="projects-container">
+    <div class="loading" style="text-align:center; padding: 20px;">Fetching pinned repositories from GitHub...</div>
+  </div>
+
+  <h2>
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+      <polygon points="12,2 22,8 22,16 12,22 2,16 2,8" />
+      <polygon points="12,6 18,9 18,15 12,18 6,15 6,9" />
+      <line x1="12" y1="2" x2="12" y2="6" />
+      <line x1="22" y1="8" x2="18" y2="9" />
+      <line x1="22" y1="16" x2="18" y2="15" />
+      <line x1="12" y1="22" x2="12" y2="18" />
+      <line x1="2" y1="16" x2="6" y2="15" />
+      <line x1="2" y1="8" x2="6" y2="9" />
+    </svg>
+    contact
+  </h2>
+  <div class="contact">
+    <div class="contact-links">
+      <a href="mailto:jiamingshi_git@outlook.com">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        jiamingshi_git@outlook.com
+      </a>
+      <a href="https://github.com/JiamingShi-JsPhys" target="_blank" rel="noopener noreferrer">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span class="mono">symmetry · physics · computation</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas || typeof THREE === 'undefined') return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.z = 6;
+
+  const ACCENT = 0xa78bfa, VERTEX = 0xe9d5ff;
+  const geoms = [
+    new THREE.IcosahedronGeometry(0.28, 0),
+    new THREE.OctahedronGeometry(0.30, 0),
+    new THREE.TetrahedronGeometry(0.32, 0),
+    new THREE.IcosahedronGeometry(0.22, 0),
+    new THREE.OctahedronGeometry(0.26, 0),
+    new THREE.TetrahedronGeometry(0.28, 0),
+    new THREE.IcosahedronGeometry(0.20, 0),
+    new THREE.OctahedronGeometry(0.24, 0),
+    new THREE.TetrahedronGeometry(0.26, 0),
+  ];
+
+  const objects = [];
+  geoms.forEach((geo) => {
+    const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      color: ACCENT, wireframe: true, transparent: true, opacity: 0.4
+    }));
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute('position', geo.attributes.position.clone());
+    mesh.add(new THREE.Points(pg, new THREE.PointsMaterial({
+      color: VERTEX, size: 0.04, sizeAttenuation: true, transparent: true, opacity: 0.6
+    })));
+    mesh.userData = {
+      base: new THREE.Vector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 3 - 1),
+      rotX: (Math.random() - 0.5) * 0.006,
+      rotY: (Math.random() - 0.5) * 0.008,
+      phase: Math.random() * Math.PI * 2,
+      wobbleAmp: 0.3 + Math.random() * 0.4,
+      wobbleFreq: 0.15 + Math.random() * 0.2,
+    };
+    mesh.position.copy(mesh.userData.base);
+    scene.add(mesh);
+    objects.push(mesh);
+  });
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.004;
+    objects.forEach((obj) => {
+      const d = obj.userData;
+      obj.position.x = d.base.x + Math.sin(t * d.wobbleFreq + d.phase) * d.wobbleAmp;
+      obj.position.y = d.base.y + Math.cos(t * d.wobbleFreq * 0.8 + d.phase) * d.wobbleAmp * 0.8;
+      obj.position.z = d.base.z + Math.sin(t * 0.12 + d.phase) * 0.4;
+      obj.rotation.x += d.rotX;
+      obj.rotation.y += d.rotY;
+    });
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+  });
+})();
+
+(function () {
+  const USERNAME = 'JiamingShi-JsPhys';
+  const grid = document.getElementById('contrib-grid');
+  const countEl = document.getElementById('contrib-count');
+  const overlay = document.getElementById('wave-overlay');
+  if (!grid || !overlay) return;
+
+  const WEEKS = 52, DAYS = 7;
+  const wctx = overlay.getContext('2d');
+
+  const SIGMA = 3.6;
+  const GLOW_THRESHOLD = 0.12;
+  const SPEED = 4.0;
+  const WAVELENGTH_COLS = 3.2;
+  const EDGE_FADE_COLS = 2.5;
+
+  async function fetchContribs() {
+    const url = `https://github-contributions-api.jogruber.de/v4/${USERNAME}?y=last`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    return data.contributions;
+  }
+
+  function fallbackData() {
+    const out = [];
+    const today = new Date();
+    for (let i = 364; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const day = d.getDay();
+      const isWeekend = (day === 0 || day === 6);
+      const r = Math.random();
+      const base = isWeekend ? 0.2 : 0.55;
+      const v = base + r * 0.5 - 0.2;
+      let level = 0;
+      if (v > 0.75) level = 4;
+      else if (v > 0.55) level = 3;
+      else if (v > 0.35) level = 2;
+      else if (v > 0.15) level = 1;
+      out.push({ date: d.toISOString().slice(0, 10), count: level, level });
+    }
+    return out;
+  }
+
+  function groupByWeek(contribs) {
+    const weeks = Array.from({ length: WEEKS }, () => Array(DAYS).fill(null));
+    const byDate = {};
+    contribs.forEach(c => { byDate[c.date] = c; });
+
+    const today = new Date();
+    const todayDow = today.getDay();
+    const lastSunday = new Date(today);
+    lastSunday.setDate(today.getDate() - todayDow);
+    const start = new Date(lastSunday);
+    start.setDate(start.getDate() - (WEEKS - 1) * 7);
+
+    for (let w = 0; w < WEEKS; w++) {
+      for (let d = 0; d < DAYS; d++) {
+        const date = new Date(start);
+        date.setDate(start.getDate() + w * 7 + d);
+        const key = date.toISOString().slice(0, 10);
+        weeks[w][d] = byDate[key] || { date: key, count: 0, level: 0 };
+      }
+    }
+    return weeks;
+  }
+
+  let cellsByWeek = [];
+  function renderGrid(weeks) {
+    grid.innerHTML = '';
+    cellsByWeek = [];
+    let total = 0;
+    for (let w = 0; w < WEEKS; w++) {
+      const col = document.createElement('div');
+      col.className = 'contrib-col';
+      const colCells = [];
+      for (let d = 0; d < DAYS; d++) {
+        const cell = document.createElement('div');
+        cell.className = 'contrib-cell';
+        const item = weeks[w][d];
+        cell.dataset.level = item.level || 0;
+        cell.title = `${item.date}: ${item.count} contribution${item.count === 1 ? '' : 's'}`;
+        col.appendChild(cell);
+        colCells.push(cell);
+        total += item.count || 0;
+      }
+      grid.appendChild(col);
+      cellsByWeek.push(colCells);
+    }
+    countEl.classList.remove('loading');
+    countEl.textContent = `${total} contributions`;
+  }
+
+  let colCentersX = [];
+  function computeColCenters() {
+    const overlayRect = overlay.getBoundingClientRect();
+    colCentersX = [];
+    for (let w = 0; w < WEEKS; w++) {
+      const cell = cellsByWeek[w] && cellsByWeek[w][0];
+      if (!cell) { colCentersX.push(0); continue; }
+      const r = cell.getBoundingClientRect();
+      colCentersX.push(r.left + r.width / 2 - overlayRect.left);
+    }
+  }
+
+  let waveX = -8;
+  let lastTime = 0;
+
+  function edgeFade(x) {
+    const left = Math.max(0, Math.min(1, x / EDGE_FADE_COLS));
+    const right = Math.max(0, Math.min(1, (WEEKS - x) / EDGE_FADE_COLS));
+    return Math.min(left, right);
+  }
+
+  function updateGlow() {
+    for (let w = 0; w < WEEKS; w++) {
+      const dist = w - waveX;
+      let intensity = Math.exp(-(dist * dist) / (2 * SIGMA * SIGMA));
+      intensity *= edgeFade(waveX);
+      const cells = cellsByWeek[w];
+      if (!cells) continue;
+      if (intensity > GLOW_THRESHOLD) {
+        cells.forEach(c => {
+          if (!c.classList.contains('glowing')) c.classList.add('glowing');
+        });
+      } else {
+        cells.forEach(c => c.classList.remove('glowing'));
+      }
+    }
+  }
+
+  function drawWave() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = overlay.getBoundingClientRect();
+    const w = rect.width, h = rect.height;
+    if (overlay.width !== Math.round(w * dpr) || overlay.height !== Math.round(h * dpr)) {
+      overlay.width = Math.round(w * dpr);
+      overlay.height = Math.round(h * dpr);
+      wctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    wctx.clearRect(0, 0, w, h);
+
+    if (colCentersX.length < 2) return;
+    const colStep = colCentersX[1] - colCentersX[0];
+    if (colStep <= 0) return;
+
+    const centerY = h / 2;
+    const amplitude = h * 0.36;
+    const sigmaPx = SIGMA * colStep;
+    const lambdaPx = WAVELENGTH_COLS * colStep;
+
+    const clampedX = Math.max(0, Math.min(WEEKS - 1, waveX));
+    const i0 = Math.floor(clampedX);
+    const i1 = Math.min(WEEKS - 1, i0 + 1);
+    const frac = clampedX - i0;
+    const waveCenterX = colCentersX[i0] * (1 - frac) + colCentersX[i1] * frac;
+
+    const fade = edgeFade(waveX);
+
+    const points = [];
+    const stepPx = 1.5;
+    for (let x = 0; x <= w; x += stepPx) {
+      const dx = x - waveCenterX;
+      const env = Math.exp(-(dx * dx) / (2 * sigmaPx * sigmaPx));
+      const y = centerY - env * amplitude * fade * Math.cos((2 * Math.PI * dx) / lambdaPx);
+      points.push([x, y]);
+    }
+
+    wctx.beginPath();
+    wctx.moveTo(0, centerY);
+    points.forEach(([x, y]) => wctx.lineTo(x, y));
+    wctx.lineTo(w, centerY);
+    wctx.closePath();
+    wctx.fillStyle = `rgba(167, 139, 250, ${0.04 * fade})`;
+    wctx.fill();
+
+    wctx.beginPath();
+    points.forEach(([x, y], i) => {
+      if (i === 0) wctx.moveTo(x, y);
+      else wctx.lineTo(x, y);
+    });
+    wctx.strokeStyle = `rgba(167, 139, 250, ${0.30 * fade})`;
+    wctx.lineWidth = 1.3;
+    wctx.stroke();
+
+    wctx.beginPath();
+    wctx.moveTo(0, centerY);
+    wctx.lineTo(w, centerY);
+    wctx.strokeStyle = `rgba(167, 139, 250, ${0.05 * fade})`;
+    wctx.lineWidth = 1;
+    wctx.setLineDash([3, 4]);
+    wctx.stroke();
+    wctx.setLineDash([]);
+  }
+
+  function tick(now) {
+    if (!lastTime) lastTime = now;
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+
+    waveX += SPEED * dt;
+    if (waveX > WEEKS + EDGE_FADE_COLS + 2) waveX = -EDGE_FADE_COLS - 2;
+
+    updateGlow();
+    drawWave();
+    requestAnimationFrame(tick);
+  }
+
+  (async () => {
+    let contribs;
+    try {
+      contribs = await fetchContribs();
+    } catch (e) {
+      contribs = fallbackData();
+      countEl.textContent = 'API Failed';
+    }
+    const weeks = groupByWeek(contribs);
+    renderGrid(weeks);
+
+    requestAnimationFrame(() => {
+      computeColCenters();
+      requestAnimationFrame(tick);
+    });
+
+    window.addEventListener('resize', () => {
+      computeColCenters();
+    });
+  })();
+})();
+
+(async function() {
+  const container = document.getElementById('projects-container');
+  const username = 'JiamingShi-JsPhys';
+  
+  const fallbackRepos = [
+    {
+      name: 'agent-skills',
+      description: 'A growing collection of standalone agent skills by Jiaming Shi. Each folder is a self-contained Skill package — its own SKILL.md, README,...'
+    },
+    {
+      name: 'agent-emergence',
+      description: 'Js_Emergence, by Jiaming Shi, is the front door to tools. It unifies the skills inside Js_Agent-Skills: you ask, it finds the right tool...'
+    },
+    {
+      name: 'chem-notes',
+      description: 'A self-contained set of General Chemistry lecture notes, typeset in LaTeX. It takes a physics-first, axiomatic approach rather than asser...'
+    }
+  ];
+
+  function renderCards(repos) {
+    repos.sort((a, b) => {
+      const starsA = a.stars || a.stargazers_count || 0;
+      const starsB = b.stars || b.stargazers_count || 0;
+      if (starsB !== starsA) {
+        return starsB - starsA;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    const displayRepos = repos.slice(0, 4);
+
+    container.innerHTML = displayRepos.map(repo => {
+      let desc = repo.description || 'No description provided.';
+      if (desc.length > 120) desc = desc.substring(0, 120) + '...';
+      desc = desc.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      const finalUrl = `https://github.com/${username}/${repo.name}`;
+
+      return `
+        <a href="${finalUrl}" target="_blank" rel="noopener noreferrer" class="project-card">
+          <div class="project-title">${repo.name}</div>
+          <div class="project-desc">${desc}</div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  try {
+    const res = await fetch(`https://pinned.berrysauce.dev/get/${username}`);
+    if (!res.ok) throw new Error('Pinned API failed');
+    const pinnedRepos = await res.json();
+    
+    if (pinnedRepos && Array.isArray(pinnedRepos) && pinnedRepos.length > 0) {
+      renderCards(pinnedRepos);
+    } else {
+      throw new Error('No pinned repos found');
+    }
+  } catch (e) {
+    try {
+      const res = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+      if (!res.ok) throw new Error('GitHub API failed');
+      const repos = await res.json();
+      
+      if (Array.isArray(repos)) {
+          const filtered = repos.filter(r => !r.fork && r.name.toLowerCase() !== username.toLowerCase());
+          if (filtered.length > 0) {
+            renderCards(filtered);
+          } else {
+            renderCards(fallbackRepos);
+          }
+      } else {
+          renderCards(fallbackRepos);
+      }
+    } catch (err) {
+      renderCards(fallbackRepos);
+    }
+  }
+})();
+</script>
+</body>
+</html>
