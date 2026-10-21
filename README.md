@@ -18,7 +18,7 @@
 <br>
 
 
-<img width="100%" src="./output/wave.gif" alt="contributions">
+<img width="100%" src="./output/wave.gif?v=2" alt="contributions">
 
 <br>
 
