@@ -4,6 +4,8 @@
 
 <p><strong>Department of Physics · Westlake University</strong></p>
 
+<p><strong>施嘉名 西湖大学物理系</strong></p>
+
 <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=400&size=16&pause=1000&color=A78BFA&background=00000000&center=true&vCenter=true&width=850&height=40&lines=Seeking+Underlying+Structures;First+Principles;Open-Source+Ecosystem+Builder;Reconstructing+Knowledge+Systems" alt="typing">
 
 <h3><a href="https://jiamingshi-jsphys.github.io/JiamingShi-JsPhys/">→ Full dynamic profile →</a></h3>
