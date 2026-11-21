@@ -1091,7 +1091,7 @@
         '<div class="skel skel-line w90"></div>' +
         '<div class="skel skel-line w60"></div>' +
         '</div>';
-      container.innerHTML = card + card + card + card;
+      container.innerHTML = card + card + card + card + card + card + card + card;
     }
 
     function esc(s) {
@@ -1108,7 +1108,7 @@
         if (sb !== sa) return sb - sa;
         return String(a.name).localeCompare(String(b.name));
       });
-      container.innerHTML = list.slice(0, 4).map(function (r) {
+      container.innerHTML = list.slice(0, 8).map(function (r) {
         var desc = (r.description || 'No description provided.').trim();
         if (desc.length > 150) desc = desc.slice(0, 147).replace(/\s+\S*$/, '') + '…';
         var lang = r.language || '';
